@@ -1,0 +1,23 @@
+{
+    "name": "ndevrstudios/concerto",
+    "description": "Single page app extensions for L4",
+    "authors": [
+        {
+            "name": "Shifat Adnan",
+            "email": "adnan.pri@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Ndevrstudios\\Concerto": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
