@@ -25,7 +25,7 @@ class ConcertoServiceProvider extends ServiceProvider {
 		});
 
 		$this->app['ndevrstudios.KoResponseHandler'] = $this->app->share(function() {
-			return new \ResponseHandler\KoResponseHandler;
+			return new ResponseHandler\KoResponseHandler;
 		});
 	}
 

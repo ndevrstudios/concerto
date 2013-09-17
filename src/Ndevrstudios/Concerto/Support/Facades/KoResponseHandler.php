@@ -1,4 +1,4 @@
-<?php namespace Ndevrstudios\Concerto\Facades;
+<?php namespace Ndevrstudios\Concerto\Support\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

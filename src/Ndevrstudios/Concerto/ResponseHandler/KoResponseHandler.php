@@ -10,13 +10,19 @@ class KoResponseHandler implements ResponseHandlerInterface {
 	private $output = array();
 	private $exclusive;
 
-	public function __construct( $input ) {
+	// public function __construct( $input ) {
+	// 	$this->input = $input;
+	// 	$this->exclusive = (isset($this->input['observables']['exclusive']))? $this->input['observables']['exclusive']:false;
+	// 	if(isset($this->input['observables']['exclusive'])) unset($this->input['observables']['exclusive']);
+	// }
+
+	public function make( $input ) {
 		$this->input = $input;
 		$this->exclusive = (isset($this->input['observables']['exclusive']))? $this->input['observables']['exclusive']:false;
 		if(isset($this->input['observables']['exclusive'])) unset($this->input['observables']['exclusive']);
 	}
 
-	public function register( $observable, Closure $callback = null ) {
+	public function register( $observable, \Closure $callback = null ) {
 		$this->observables[] = $observable;
 		$this->callbacks[$observable] = $callback;
 	}
