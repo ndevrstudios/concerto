@@ -14,11 +14,10 @@ class SinglePageHandler {
 		App::bind('concerto.SinglePageHandler', function($app) use ($self) {
 			return $self;
 		});
-		// $this->globalsJs = $this->delegate->getSinglePageJsGlobals();
+		$this->globalsJs = $this->delegate->getSinglePageJsGlobals();
 	}
 
 	public function getJsGlobals() {
-		return "";
 		return $this->globalsJs;
 	}
 }
