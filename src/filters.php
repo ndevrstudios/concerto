@@ -18,8 +18,10 @@ Route::filter('concerto.facebook_response', function( $route, $request, $value =
 });
 
 // the :view parameter is passed during route definition to allow loading of different base views
-Route::filter('concerto.ajax_check', function( $route, $request, $view )
+Route::filter('concerto.ajax_check', function( $route, $request, $package = '', $view )
 {
+	if($package !== '')
+		$view = $package.'::'.$view;
 	$viewData = View::make($view);
 	$singlePageHandler = App::make('concerto.SinglePageHandler');
 	if($singlePageHandler) {

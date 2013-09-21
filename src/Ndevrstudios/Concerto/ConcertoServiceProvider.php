@@ -28,7 +28,17 @@ class ConcertoServiceProvider extends ServiceProvider {
 			return new ResponseHandler\KoResponseHandler;
 		});
 
+		$this->registerArtisanCommands();
+
 		include __DIR__."/../../filters.php";
+	}
+
+	private function registerArtisanCommands()
+	{
+		$this->app['command.concerto.cacheviews'] = $this->app->share(function($app) {
+			return new Support\Console\DumpViewsCacheCommand;
+		});
+		$this->commands('command.concerto.cacheviews');
 	}
 
 	/**
