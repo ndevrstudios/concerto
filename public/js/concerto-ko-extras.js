@@ -1,10 +1,39 @@
 (function (factory) {
 	if (typeof define === "function" && define["amd"]) {
-		define(["vendor/Knockout/knockout-2.3.0.min"], factory);
+		define(["ko"], factory);
 	} else {
 		factory(ko);
 	}
 }(function (ko, undefined) {
+
+	// Extend the Knockout Observable(Array) objects for throttling subscriptions
+
+	// ko.subscribable.fn.notify = true;
+	// ko.subscribable.fn.notifySubscribersOriginal = ko.subscribable.fn.notifySubscribers;
+	// ko.subscribable.fn.notifySubscribers = function (valueToNotify, event) {
+	// 	console.log(this.notify, valueToNotify, event);
+	// 	if(this.notify && (event == undefined || event == "change"))
+	// 		this.notifySubscribersOriginal(valueToNotify, event);
+	// 	else {
+	// 		if((event == undefined || event == "change"))
+	// 			this.notify = true;
+	// 	}
+	// };
+
+	ko.subscribable.fn.makeNotificationStoppable = function() {
+		this.notify = true;
+		this.notifySubscribersOriginal = this.notifySubscribers;
+		this.notifySubscribers = function (valueToNotify, event) {
+			console.log(this.notify, valueToNotify, event);
+			if(this.notify && (event == undefined || event == "change"))
+				this.notifySubscribersOriginal(valueToNotify, event);
+			else {
+				if((event == undefined || event == "change"))
+					this.notify = true;
+			}
+		};
+	};
+
 	var ext = {};
 	ext.koViewModel = function( identifier ) {
 		var self = this;

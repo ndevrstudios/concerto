@@ -41,12 +41,18 @@ var staterouter = (function () {
     function Router() {
         var self = this;
         self.performRoute = true;
+        self.changeStateOnNavigate = true;
         self.routes = {};
         self.routeSignatures = {};
         self.currentRouteSignature = '';
+        self.currentUrl = '';
 
         self.preventDefault = function() {
             self.performRoute = false;
+        };
+
+        self.preventChangeStateOnNavigate = function() {
+            self.changeStateOnNavigate = false;
         };
 
         self.route = function (path, func) {
@@ -83,21 +89,28 @@ var staterouter = (function () {
                 path = currentPath + path;
             }
 
-            if (path !== normalizePath(getRelativeUrl(currentUrl)) || data !== currentData || title !== currentTitle) {
-                History.pushState(data, title, path);
-            }
-            else {
-                // Trigger a statechange when just re-navigating to the same
-                // state, as History.js won't do this for us
-                //console.log('State hasn\'t changed, just triggering a statechange');
-                $(window).trigger('statechange');
+            if(self.changeStateOnNavigate) {            
+                if (path !== normalizePath(getRelativeUrl(currentUrl)) || data !== currentData || title !== currentTitle) {
+                    History.pushState(data, title, path);
+                }
+                else {
+                    // Trigger a statechange when just re-navigating to the same
+                    // state, as History.js won't do this for us
+                    //console.log('State hasn\'t changed, just triggering a statechange');
+                    $(window).trigger('statechange');
+                }
+            } else {
+                self.perform({url:path});
+                self.changeStateOnNavigate = true;
             }
             return self;
         };
 
-        self.perform = function () {
-            var state = History.getState(),
+        self.perform = function ( state ) {
+            if( state === undefined )
+                state = History.getState();
                 // Get pathname part of URL, which is what we'll be matching
+            var
                 path = getCurrentPath(state),
                 route,
                 rx,
@@ -114,6 +127,7 @@ var staterouter = (function () {
                         // Translate groups to parameters
                         func = self.routes[route];
                         self.currentRouteSignature = self.routeSignatures[route];
+                        self.currentUrl = path;
 //                        console.log('Route ' + route  + ' matched, arguments: ' + match.slice(1));
                         func.apply(state, match.slice(1));
                         break;

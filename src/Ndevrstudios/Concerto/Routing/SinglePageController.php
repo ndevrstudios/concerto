@@ -15,8 +15,8 @@ class SinglePageController extends Controller implements SinglePageInterface {
 	{
 		return json_encode( array(
 			'vm_def' => array(
-				'logged_in' => Auth::check(),
-				'user_data' => User::first()->toArray(),
+				'logged_in' => \Auth::check(),
+				'user_data' => \User::first()->toArray(),
 			)
 		));
 	}
