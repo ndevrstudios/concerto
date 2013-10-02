@@ -57,11 +57,20 @@ var staterouter = (function () {
 
         self.route = function (path, func) {
             var route;
-            path = normalizePath(path);
-            // Replace :[^/]+ with ([^/]+), f.ex. /persons/:id/resource -> /persons/([^/]+)/resource
-            route = '^' + path.replace(/:\w+/g, '([^/]+)') + '$';
-            self.routes[route] = func;
-            self.routeSignatures[route] = path;
+            if(path.push === undefined) {
+                path = normalizePath(path);
+                // Replace :[^/]+ with ([^/]+), f.ex. /persons/:id/resource -> /persons/([^/]+)/resource
+                route = '^' + path.replace(/:\w+/g, '([^/]+)') + '$';
+                self.routes[route] = func;
+                self.routeSignatures[route] = path;                
+            } else {
+                for (var i = path.length - 1; i >= 0; i--) {
+                    var pathStr = path[i];
+                    route = '^' + pathStr.replace(/:\w+/g, '([^/]+)') + '$';
+                    self.routes[route] = func;
+                    self.routeSignatures[route] = pathStr;                
+                };
+            }
             return self;
         };
 

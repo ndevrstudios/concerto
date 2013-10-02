@@ -13,6 +13,7 @@
 	}
 
 	var Concerto = {};
+	Concerto.Globals = {};
 
 	Concerto.URL = {};
 	Concerto.URL.getQS = function (name) {
@@ -39,7 +40,18 @@
 
 	if( window.ConcertoGlobals && window.ConcertoGlobals.vm_def ) {
 		for(var def in window.ConcertoGlobals.vm_def) {
-			Concerto.KO.BaseModelDef[def] = window.ConcertoGlobals.vm_def[def];
+			if( window.ConcertoGlobals.vm_def[def].push === undefined ) {
+				Concerto.KO.BaseModelDef[def] = ko.observable(window.ConcertoGlobals.vm_def[def]);
+			} else {
+				Concerto.KO.BaseModelDef[def] = ko.observableArray(window.ConcertoGlobals.vm_def[def]);
+			}
+		}
+		window.ConcertoGlobals.vm_def = undefined;
+	}
+
+	for(var key in window.ConcertoGlobals) {
+		if(window.ConcertoGlobals[key] !== undefined) {
+			Concerto.Globals[key] = window.ConcertoGlobals[key];
 		}
 	}
 	window.ConcertoGlobals = undefined;
@@ -63,6 +75,7 @@
 	};
 
 	Concerto.Router = new Router.Router();
+	Concerto.Router.updateDOM = true;
 
 	Concerto.Router.Filters = {};
 	Concerto.Router.Filters.before = [];
@@ -96,12 +109,16 @@
 	Concerto.Page.loadSettings = [];
 
 	Concerto.Page.applyBindings = function( vm, domTarget ) {
-		if( vm && domTarget ) {
-			ko.cleanNode(jQuery(domTarget)[0]);
-			ko.applyBindings( vm, jQuery(domTarget)[0] );
-		} else {
-			ko.applyBindings( Concerto.Page.viewModel );
-		}
+		// if(Concerto.Router.updateDOM === true) {
+			if( vm && domTarget ) {
+				ko.cleanNode(jQuery(domTarget)[0]);
+				ko.applyBindings( vm, jQuery(domTarget)[0] );
+			} else {
+				ko.applyBindings( Concerto.Page.viewModel );
+			}
+		// } else {
+		// 	Concerto.Router.updateDOM = true;
+		// }
 	};
 
 	Concerto.Page.load = function( domTarget ) {
@@ -146,17 +163,29 @@
 			var self = this;
 			var params = arguments;
 
-			for (var i = 0, length = Concerto.Router.Filters.before.length; i < length; i++) {
-				Concerto.Router.Filters.before[i].call(self, arguments);
-			};
-
-			var pageLoad = Concerto.Page.load(Concerto.Page.domTarget);
-			pageLoad.done( function( response ) {
-				for (var i = 0, length = Concerto.Router.Filters.after.length; i < length; i++) {
-					Concerto.Router.Filters.after[i].call(self, arguments, response);
+			if(Concerto.Router.updateDOM) {
+				for (var i = 0, length = Concerto.Router.Filters.before.length; i < length; i++) {
+					Concerto.Router.Filters.before[i].call(self, arguments);
 				};
+			}
 
-				callback.call(self, arguments);
+			var pageLoad;
+			if(Concerto.Router.updateDOM) {
+				pageLoad = Concerto.Page.load(Concerto.Page.domTarget);
+			} else {
+				pageLoad = jQuery.Deferred();
+				pageLoad.resolve();
+			}
+			pageLoad.done( function( response ) {
+				if(Concerto.Router.updateDOM) {
+					for (var i = 0, length = Concerto.Router.Filters.after.length; i < length; i++) {
+						Concerto.Router.Filters.after[i].call(self, arguments, response);
+					};
+				} else {
+					Concerto.Router.updateDOM = true;
+				}
+
+				callback.apply(self, params);
 			});
 		});
 	};
@@ -176,7 +205,7 @@
 					Concerto.Router.Filters.afterModal[i].call(self, arguments, response);
 				};
 
-				callback.call(self, arguments);
+				callback.apply(self, params);
 
 				Concerto.Router.preventChangeStateOnNavigate();
 				Concerto.Router.navigate(parent_page);
@@ -223,13 +252,15 @@
 			// Prepare
 			var	$this = jQuery(this),
 				url = '/' + $this.attr('href').replace(rootUrl, '');
+
+				if(url == '//') url = '/';
 			
 			// Continue as normal for cmd clicks etc
 			if ( event.which == 2 || event.metaKey ) { return true; }
 			
 			// Ajaxify this link
 			event.preventDefault();
-			console.log('cometh hither');
+			// console.log(url);
 			History.pushState(null, '', url);
 			return false;
 		});
