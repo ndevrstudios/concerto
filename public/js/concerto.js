@@ -12,6 +12,15 @@
 		});
 	}
 
+	jQuery.fn.scrolledIntoViewFor = function(parent_selector) {
+		$parent = jQuery(parent_selector);
+		$this = jQuery(this);
+		var docViewHeight = $parent.height();
+		var elemTop = $this.offset().top - $parent.offset().top;
+		var elemBottom = elemTop + $this.height();
+		return ((elemBottom <= docViewHeight) && (elemTop >= 0)); 
+	};
+
 	var Concerto = {};
 	Concerto.Globals = {};
 
@@ -135,7 +144,7 @@
 		var cachedResponse = Amplify.store(routeSignature);
 		if (cachedResponse) {
 			$content.stop(true,true);
-			$content.html(cachedResponse).css('opacity', 100).show();
+			$content.html(cachedResponse).attr('data-url', url).css('opacity', 100).show();
 			dfd.resolve(cachedResponse);
 		} else {
 			jQuery.ajax({
@@ -145,7 +154,7 @@
 
 					Amplify.store(routeSignature, contentHtml);
 					$content.stop(true,true);
-					$content.html(contentHtml).css('opacity', 100).show();
+					$content.html(contentHtml).attr('data-url', url).css('opacity', 100).show();
 
 					dfd.resolve(contentHtml);
 				},
@@ -163,27 +172,27 @@
 			var self = this;
 			var params = arguments;
 
-			if(Concerto.Router.updateDOM) {
+			// if(Concerto.Router.updateDOM) {
 				for (var i = 0, length = Concerto.Router.Filters.before.length; i < length; i++) {
 					Concerto.Router.Filters.before[i].call(self, arguments);
 				};
-			}
+			// }
 
 			var pageLoad;
-			if(Concerto.Router.updateDOM) {
+			// if(Concerto.Router.updateDOM) {
 				pageLoad = Concerto.Page.load(Concerto.Page.domTarget);
-			} else {
-				pageLoad = jQuery.Deferred();
-				pageLoad.resolve();
-			}
+			// } else {
+			// 	pageLoad = jQuery.Deferred();
+			// 	pageLoad.resolve();
+			// }
 			pageLoad.done( function( response ) {
-				if(Concerto.Router.updateDOM) {
+				// if(Concerto.Router.updateDOM) {
 					for (var i = 0, length = Concerto.Router.Filters.after.length; i < length; i++) {
 						Concerto.Router.Filters.after[i].call(self, arguments, response);
 					};
-				} else {
-					Concerto.Router.updateDOM = true;
-				}
+				// } else {
+				// 	Concerto.Router.updateDOM = true;
+				// }
 
 				callback.apply(self, params);
 			});
@@ -207,8 +216,10 @@
 
 				callback.apply(self, params);
 
-				Concerto.Router.preventChangeStateOnNavigate();
-				Concerto.Router.navigate(parent_page);
+				if( jQuery(Concerto.Page.domTarget).data('url') == undefined ) {
+					Concerto.Router.preventChangeStateOnNavigate();
+					Concerto.Router.navigate(parent_page);
+				}
 			});
 		});
 	};
