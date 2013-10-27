@@ -122,7 +122,7 @@
 	Concerto.Page.showModal = function() {};
 	Concerto.Page.closeModal = function() {
 		Concerto.Router.preventDefault();
-		Concerto.Router.navigate(jQuery(Concerto.Page.domTarget).data('url'));
+		Concerto.Router.navigate(jQuery(Concerto.Page.domTarget).attr('data-url'));
 		jQuery(Concerto.Page.domTargetModal).html('');
 		Concerto.Page.hideModal();
 		Concerto.Page.showingModal = false;
