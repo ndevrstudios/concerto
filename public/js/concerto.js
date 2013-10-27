@@ -121,17 +121,17 @@
 	Concerto.Page.hideModal = function() {};
 	Concerto.Page.showModal = function() {};
 	Concerto.Page.closeModal = function() {
-		Concerto.Router.preventDefault();
-		Concerto.Router.navigate(jQuery(Concerto.Page.domTarget).attr('data-url'));
+		Concerto.Page.showingModal = false;
 		jQuery(Concerto.Page.domTargetModal).html('');
 		Concerto.Page.hideModal();
-		Concerto.Page.showingModal = false;
+		Concerto.Router.preventDefault();
+		Concerto.Router.navigate(jQuery(Concerto.Page.domTarget).attr('data-url'));
 	};
 
 	Concerto.Page.closeModalAndRouteTo = function( route ) {
+		Concerto.Page.showingModal = false;
 		jQuery(Concerto.Page.domTargetModal).html('');
 		Concerto.Page.hideModal();
-		Concerto.Page.showingModal = false;
 		Concerto.Router.navigate(route);
 	};
 
