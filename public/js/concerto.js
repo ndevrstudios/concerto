@@ -116,12 +116,26 @@
 	Concerto.Page.viewModel = {};
 
 	Concerto.Page.loadSettings = [];
+	Concerto.Page.showModalOnNavigate = false;
+	Concerto.Page.showingModal = false;
+	Concerto.Page.hideModal = function() {};
+	Concerto.Page.showModal = function() {};
+	Concerto.Page.closeModal = function() {
+		Concerto.Router.preventDefault();
+		Concerto.Router.navigate(jQuery(Concerto.Page.domTarget).data('url'));
+		jQuery(Concerto.Page.domTargetModal).html('');
+		Concerto.Page.hideModal();
+		Concerto.Page.showingModal = false;
+	};
 
+	Concerto.Page.postBindingsHandler = function() {};
 	Concerto.Page.applyBindings = function( vm, domTarget ) {
 		// if(Concerto.Router.updateDOM === true) {
 			if( vm && domTarget ) {
 				ko.cleanNode(jQuery(domTarget)[0]);
-				ko.applyBindings( vm, jQuery(domTarget)[0] );
+				(function() {
+					Concerto.Page.postBindingsHandler();
+				})(ko.applyBindings( vm, jQuery(domTarget)[0]));
 			} else {
 				ko.applyBindings( Concerto.Page.viewModel );
 			}
@@ -129,6 +143,7 @@
 		// 	Concerto.Router.updateDOM = true;
 		// }
 	};
+
 
 	Concerto.Page.load = function( domTarget ) {
 		var
@@ -169,6 +184,14 @@
 
 	Concerto.Router.register = function( url, callback ) {
 		Concerto.Router.route(url, function() {
+			if(Concerto.Page.showModalOnNavigate) {
+				Concerto.Page.showModalOnNavigate = false;
+			}
+			else {
+				Concerto.Page.hideModal();
+				Concerto.Page.showingModal = false;
+			}
+
 			var self = this;
 			var params = arguments;
 
@@ -204,6 +227,9 @@
 			var self = this;
 			var params = arguments;
 
+			Concerto.Page.showModal();
+			Concerto.Page.showingModal = true;
+
 			for (var i = 0, length = Concerto.Router.Filters.beforeModal.length; i < length; i++) {
 				Concerto.Router.Filters.beforeModal[i].call(self, arguments);
 			};
@@ -217,6 +243,7 @@
 				callback.apply(self, params);
 
 				if( jQuery(Concerto.Page.domTarget).data('url') == undefined ) {
+					Concerto.Page.showModalOnNavigate = true;
 					Concerto.Router.preventChangeStateOnNavigate();
 					Concerto.Router.navigate(parent_page);
 				}
