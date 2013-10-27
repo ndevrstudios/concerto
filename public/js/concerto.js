@@ -197,7 +197,7 @@
 
 			// if(Concerto.Router.updateDOM) {
 				for (var i = 0, length = Concerto.Router.Filters.before.length; i < length; i++) {
-					Concerto.Router.Filters.before[i].call(self, arguments);
+					Concerto.Router.Filters.before[i].call(self, params);
 				};
 			// }
 
@@ -211,7 +211,7 @@
 			pageLoad.done( function( response ) {
 				// if(Concerto.Router.updateDOM) {
 					for (var i = 0, length = Concerto.Router.Filters.after.length; i < length; i++) {
-						Concerto.Router.Filters.after[i].call(self, arguments, response);
+						Concerto.Router.Filters.after[i].call(self, params, response);
 					};
 				// } else {
 				// 	Concerto.Router.updateDOM = true;
@@ -231,18 +231,18 @@
 			Concerto.Page.showingModal = true;
 
 			for (var i = 0, length = Concerto.Router.Filters.beforeModal.length; i < length; i++) {
-				Concerto.Router.Filters.beforeModal[i].call(self, arguments);
+				Concerto.Router.Filters.beforeModal[i].call(self, params);
 			};
 
 			var pageLoad = Concerto.Page.load( Concerto.Page.domTargetModal );
 			pageLoad.done( function( response ) {
 				for (var i = 0, length = Concerto.Router.Filters.afterModal.length; i < length; i++) {
-					Concerto.Router.Filters.afterModal[i].call(self, arguments, response);
+					Concerto.Router.Filters.afterModal[i].call(self, params, response);
 				};
 
 				callback.apply(self, params);
 
-				if( jQuery(Concerto.Page.domTarget).data('url') == undefined ) {
+				if( jQuery(Concerto.Page.domTarget).attr('data-url') == undefined ) {
 					Concerto.Page.showModalOnNavigate = true;
 					Concerto.Router.preventChangeStateOnNavigate();
 					Concerto.Router.navigate(parent_page);
