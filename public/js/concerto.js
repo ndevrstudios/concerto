@@ -128,6 +128,13 @@
 		Concerto.Page.showingModal = false;
 	};
 
+	Concerto.Page.closeModalAndRouteTo = function( route ) {
+		jQuery(Concerto.Page.domTargetModal).html('');
+		Concerto.Page.hideModal();
+		Concerto.Page.showingModal = false;
+		Concerto.Router.navigate(route);
+	};
+
 	Concerto.Page.postBindingsHandler = function() {};
 	Concerto.Page.applyBindings = function( vm, domTarget ) {
 		// if(Concerto.Router.updateDOM === true) {
