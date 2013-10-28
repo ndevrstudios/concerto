@@ -8,6 +8,7 @@
 
 	if( Amplify.store() !== undefined ) {
 		jQuery.each( Amplify.store(), function(key) {
+			if(window.ConcertoGlobals.persistent_amplify_keys.indexOf(key)>-1) return true;
 			Amplify.store(key, null);
 		});
 	}
