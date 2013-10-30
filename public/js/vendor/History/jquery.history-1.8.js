@@ -2538,23 +2538,23 @@ if (typeof JSON !== 'object') {
 		 */
 		History.setTitle = function(newState){
 			// Prepare
-			var title = newState.title,
-				firstState;
+			// var title = newState.title,
+			// 	firstState;
 
-			// Initial
-			if ( !title ) {
-				firstState = History.getStateByIndex(0);
-				if ( firstState && firstState.url === newState.url ) {
-					title = firstState.title||History.options.initialTitle;
-				}
-			}
+			// // Initial
+			// if ( !title ) {
+			// 	firstState = History.getStateByIndex(0);
+			// 	if ( firstState && firstState.url === newState.url ) {
+			// 		title = firstState.title||History.options.initialTitle;
+			// 	}
+			// }
 
-			// Apply
-			try {
-				document.getElementsByTagName('title')[0].innerHTML = title.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; ');
-			}
-			catch ( Exception ) { }
-			document.title = title;
+			// // Apply
+			// try {
+			// 	document.getElementsByTagName('title')[0].innerHTML = title.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; ');
+			// }
+			// catch ( Exception ) { }
+			// document.title = title;
 
 			// Chain
 			return History;

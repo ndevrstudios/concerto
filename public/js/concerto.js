@@ -116,6 +116,9 @@
 	Concerto.Page.domTargetModal = '#modal-body';
 	Concerto.Page.viewModel = {};
 
+	Concerto.Page.title = '';
+	Concerto.Page.titleModal = '';
+
 	Concerto.Page.loadSettings = [];
 	Concerto.Page.showModalOnNavigate = false;
 	Concerto.Page.showingModal = false;
@@ -196,8 +199,10 @@
 				Concerto.Page.showModalOnNavigate = false;
 			}
 			else {
-				Concerto.Page.hideModal();
-				Concerto.Page.showingModal = false;
+				if(Concerto.Page.showingModal) {			
+					Concerto.Page.hideModal();
+					Concerto.Page.showingModal = false;
+				}
 			}
 
 			var self = this;
