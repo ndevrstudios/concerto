@@ -156,7 +156,7 @@
 	};
 
 
-	Concerto.Page.load = function( domTarget ) {
+	Concerto.Page.load = function( domTarget, persistentMarkup ) {
 		var
 			// url = History.getState().url,
 			url = Concerto.Router.currentUrl,
@@ -167,7 +167,7 @@
 		$content.animate({opacity:0},800);
 		
 		var dfd = jQuery.Deferred();
-		var cachedResponse = Amplify.store(routeSignature);
+		var cachedResponse = (persistentMarkup)? Amplify.store(routeSignature):false;
 		if (cachedResponse) {
 			$content.stop(true,true);
 			$content.html(cachedResponse).attr('data-url', url).css('opacity', 100).show();
@@ -193,7 +193,7 @@
 		return dfd;
 	}
 
-	Concerto.Router.register = function( url, callback ) {
+	Concerto.Router.register = function( url, callback, persistentMarkup ) {
 		Concerto.Router.route(url, function() {
 			if(Concerto.Page.showModalOnNavigate) {
 				Concerto.Page.showModalOnNavigate = false;
@@ -207,6 +207,7 @@
 
 			var self = this;
 			var params = arguments;
+			persistentMarkup = (persistentMarkup===undefined)? true:persistentMarkup;
 
 			// if(Concerto.Router.updateDOM) {
 				for (var i = 0, length = Concerto.Router.Filters.before.length; i < length; i++) {
@@ -216,7 +217,7 @@
 
 			var pageLoad;
 			// if(Concerto.Router.updateDOM) {
-				pageLoad = Concerto.Page.load(Concerto.Page.domTarget);
+				pageLoad = Concerto.Page.load(Concerto.Page.domTarget, persistentMarkup);
 			// } else {
 			// 	pageLoad = jQuery.Deferred();
 			// 	pageLoad.resolve();
