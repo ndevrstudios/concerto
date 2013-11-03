@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\View;
 
 Route::filter('concerto.facebook_response', function( $route, $request, $value = '' )
 {
-	if (substr($_SERVER['HTTP_USER_AGENT'], 0, 19) === 'facebookexternalhit') {
+	if (preg_match('/Googlebot/', $_SERVER['HTTP_USER_AGENT']) || substr($_SERVER['HTTP_USER_AGENT'], 0, 19) === 'facebookexternalhit') {
 		$fbActionMapper = App::make('concerto.FbActionMapper');
 		list($controllerName, $actionName) = explode('@', Route::currentRouteAction());
 		if ($fbActionMapper->getFbAction($actionName)) {
