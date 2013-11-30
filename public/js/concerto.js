@@ -156,6 +156,7 @@
 	};
 
 
+	Concerto.Page.fadeIn = true;
 	Concerto.Page.load = function( domTarget, persistentMarkup ) {
 		var
 			// url = History.getState().url,
@@ -164,7 +165,10 @@
 			console.log('routeSignature: ',routeSignature);
 
 		$content = jQuery(domTarget);
-		$content.animate({opacity:0},800);
+		if(Concerto.Page.fadeIn)
+			$content.animate({opacity:0},800);
+		else
+			Concerto.Page.fadeIn = true;
 		
 		var dfd = jQuery.Deferred();
 		var cachedResponse = (persistentMarkup)? Amplify.store(routeSignature):false;
