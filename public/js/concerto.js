@@ -240,7 +240,7 @@
 		});
 	};
 
-	Concerto.Router.registerModal = function( url, callback, parent_page ) {
+	Concerto.Router.registerModal = function( url, callback, parent_page, persistentMarkup ) {
 		Concerto.Router.route(url, function() {
 			var self = this;
 			var params = arguments;
@@ -252,7 +252,9 @@
 				Concerto.Router.Filters.beforeModal[i].call(self, params);
 			};
 
-			var pageLoad = Concerto.Page.load( Concerto.Page.domTargetModal );
+			persistentMarkup = (persistentMarkup===undefined)? true:persistentMarkup;
+
+			var pageLoad = Concerto.Page.load( Concerto.Page.domTargetModal, persistentMarkup );
 			pageLoad.done( function( response ) {
 				callback.apply(self, params);
 
