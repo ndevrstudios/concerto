@@ -227,6 +227,7 @@
 			// 	pageLoad.resolve();
 			// }
 			pageLoad.done( function( response ) {
+				callback.apply(self, params);
 				// if(Concerto.Router.updateDOM) {
 					for (var i = 0, length = Concerto.Router.Filters.after.length; i < length; i++) {
 						Concerto.Router.Filters.after[i].call(self, params, response);
@@ -235,7 +236,6 @@
 				// 	Concerto.Router.updateDOM = true;
 				// }
 
-				callback.apply(self, params);
 			});
 		});
 	};
@@ -254,11 +254,11 @@
 
 			var pageLoad = Concerto.Page.load( Concerto.Page.domTargetModal );
 			pageLoad.done( function( response ) {
+				callback.apply(self, params);
+
 				for (var i = 0, length = Concerto.Router.Filters.afterModal.length; i < length; i++) {
 					Concerto.Router.Filters.afterModal[i].call(self, params, response);
 				};
-
-				callback.apply(self, params);
 
 				if( jQuery(Concerto.Page.domTarget).attr('data-url') == undefined ) {
 					Concerto.Page.showModalOnNavigate = true;
